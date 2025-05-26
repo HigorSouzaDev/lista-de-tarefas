@@ -1,0 +1,174 @@
+
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lista de Tarefas - Nova Opção Tecnologia</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            max-width: 500px;
+            margin: 50px auto;
+            background-color: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 0 15px rgba(0,0,0,0.2);
+        }
+        .logo {
+            text-align: center;
+        }
+        .logo img {
+            max-width: 150px;
+        }
+        h1 {
+            text-align: center;
+            color: #222;
+        }
+        input[type="text"] {
+            width: 70%;
+            padding: 10px;
+            margin-right: 5px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        button {
+            padding: 10px;
+            border: none;
+            background-color: #000;
+            color: white;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #333;
+        }
+        ul {
+            list-style: none;
+            padding: 0;
+        }
+        li {
+            background-color: #f8f9fa;
+            margin-top: 10px;
+            padding: 10px;
+            border-radius: 5px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        li.completed {
+            text-decoration: line-through;
+            color: gray;
+        }
+        .actions button {
+            margin-left: 5px;
+            background-color: #dc3545;
+        }
+        .actions button:hover {
+            background-color: #a71d2a;
+        }
+        .complete-btn {
+            background-color: #28a745;
+        }
+        .complete-btn:hover {
+            background-color: #1c7430;
+        }
+        footer {
+            text-align: center;
+            margin-top: 20px;
+            color: #777;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="logo">
+        <img src="logo.png" alt="Logo Nova Opção Tecnologia">
+    </div>
+    <h1>Lista de Tarefas - Nova Opção Tecnologia</h1>
+    <div>
+        <input type="text" id="taskInput" placeholder="Digite uma tarefa...">
+        <button onclick="addTask()">Adicionar</button>
+    </div>
+    <ul id="taskList"></ul>
+</div>
+
+<footer>
+    © 2025 Nova Opção Tecnologia - Todos os direitos reservados
+</footer>
+
+<script>
+    const taskInput = document.getElementById('taskInput');
+    const taskList = document.getElementById('taskList');
+
+    function loadTasks() {
+        const tasks = JSON.parse(localStorage.getItem('tasks')) || [];
+        tasks.forEach(task => createTaskElement(task.text, task.completed));
+    }
+
+    function saveTasks() {
+        const tasks = [];
+        document.querySelectorAll('li').forEach(li => {
+            tasks.push({
+                text: li.querySelector('span').innerText,
+                completed: li.classList.contains('completed')
+            });
+        });
+        localStorage.setItem('tasks', JSON.stringify(tasks));
+    }
+
+    function addTask() {
+        const taskText = taskInput.value.trim();
+        if (taskText === '') {
+            alert('Digite uma tarefa!');
+            return;
+        }
+        createTaskElement(taskText, false);
+        taskInput.value = '';
+        saveTasks();
+    }
+
+    function createTaskElement(text, completed) {
+        const li = document.createElement('li');
+        if (completed) li.classList.add('completed');
+
+        const span = document.createElement('span');
+        span.innerText = text;
+        li.appendChild(span);
+
+        const actions = document.createElement('div');
+        actions.classList.add('actions');
+
+        const completeBtn = document.createElement('button');
+        completeBtn.innerText = '✔️';
+        completeBtn.classList.add('complete-btn');
+        completeBtn.onclick = () => {
+            li.classList.toggle('completed');
+            saveTasks();
+        };
+        actions.appendChild(completeBtn);
+
+        const deleteBtn = document.createElement('button');
+        deleteBtn.innerText = '🗑️';
+        deleteBtn.onclick = () => {
+            li.remove();
+            saveTasks();
+        };
+        actions.appendChild(deleteBtn);
+
+        li.appendChild(actions);
+        taskList.appendChild(li);
+    }
+
+    loadTasks();
+</script>
+
+</body>
+</html>
